@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.MoreVert
@@ -47,34 +49,39 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import org.d3if3022.mobpro1.database.MahasiswaDb
+import org.d3if3022.mobpro1.database.BarangDb
 import org.d3if3022.mobpro1.util.ViewModelFactory
 
 
-const val KEY_ID_MAHASISWA = "idMahasiswa"
+const val KEY_ID_BARANG = "idBarang"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DetailScreen(navController: NavHostController, id: Long? = null){
     val contenx = LocalContext.current
-    val db = MahasiswaDb.getInstance(contenx)
+    val db = BarangDb.getInstance(contenx)
     val factory = ViewModelFactory(db.dao)
     val viewModel: DetailViewModel = viewModel(factory = factory)
 
     var nama by remember { mutableStateOf("") }
-    var nim by remember { mutableStateOf("") }
+    var jenis by remember { mutableStateOf("") }
+    var jumlah by remember { mutableStateOf("") }
     var harga by remember { mutableStateOf("") }
-    var selectedClass by remember { mutableStateOf("") }
+    var ukuran by remember { mutableStateOf("") }
+    var deskripsi by remember { mutableStateOf( "") }
 
     var showDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(true) {
         if (id == null) return@LaunchedEffect
-        val data = viewModel.getMahasiswa(id) ?: return@LaunchedEffect
+        val data = viewModel.getBarang(id) ?: return@LaunchedEffect
         nama = data.nama
-        nim = data.nim
+        jenis = data.jenis
+        jumlah = data.jumlah
         harga = data.harga
-        selectedClass = data.kelas
+        ukuran = data.ukuran
+        deskripsi = data.deskripsi
+
     }
 
     Scaffold (
@@ -101,14 +108,14 @@ fun DetailScreen(navController: NavHostController, id: Long? = null){
                 ),
                 actions = {
                     IconButton(onClick = {
-                        if (nama == "" || nim == "" || harga == "" || selectedClass == "") {
+                        if (nama == "" || jenis == "" || jumlah == "" || harga == "" || ukuran == ""|| deskripsi == "") {
                             Toast.makeText(contenx, R.string.invalid, Toast.LENGTH_LONG).show()
                             return@IconButton
                         }
                         if (id == null) {
-                            viewModel.insert(nama, nim, harga, selectedClass)
+                            viewModel.insert(nama, jenis, jumlah, harga, ukuran, deskripsi)
                         } else {
-                            viewModel.update(id, nama, nim, harga, selectedClass)
+                            viewModel.update(id, nama, jenis, jumlah, harga, ukuran, deskripsi)
                         }
                         navController.popBackStack()}) {
                         Icon(
@@ -131,16 +138,20 @@ fun DetailScreen(navController: NavHostController, id: Long? = null){
             )
         }
     ) { padding ->
-        FormMahasiswa(
+        FormBarang(
             name = nama,
             onNameChange = { nama = it },
-            nim = nim,
-            onNimChange = { nim = it },
+            jenis = jenis,
+            onJenisChange = { jenis = it },
+            jumlah = jumlah,
+            onJumlahChange = { jumlah = it },
             harga = harga,
             onHargaChange = { harga = it },
-            selectedClass = selectedClass,
-            onClassChange = { selectedClass = it },
-            modifier = Modifier.padding(padding)
+            ukuran = ukuran,
+            onUkuranChange = { ukuran = it },
+            deskripsi = deskripsi,
+            onDeskripsiChange = { deskripsi = it },
+            modifier = Modifier.verticalScroll(rememberScrollState()).padding(padding)
         )
     }
 }
@@ -172,11 +183,13 @@ fun DeleteAction(delete: () -> Unit) {
 }
 
 @Composable
-fun FormMahasiswa(
+fun FormBarang(
     name: String, onNameChange: (String) -> Unit,
-    nim: String, onNimChange: (String) -> Unit,
+    jenis: String, onJenisChange: (String) -> Unit,
+    jumlah: String, onJumlahChange: (String) -> Unit,
     harga: String, onHargaChange: (String) -> Unit,
-    selectedClass: String, onClassChange: (String) -> Unit,
+    ukuran: String, onUkuranChange: (String) -> Unit,
+    deskripsi: String, onDeskripsiChange: (String) -> Unit,
     modifier: Modifier
 ) {
     Column(
@@ -196,10 +209,34 @@ fun FormMahasiswa(
             ),
             modifier = Modifier.fillMaxWidth()
         )
+        OutlinedCard(modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(4.dp)
+        ){
+            Column {
+                listOf(
+                    "Kaos",
+                    "Celana",
+                    "Jaket",
+                    "Kemeja",
+                    "Jas"
+                ).forEach { classOption ->
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        modifier = Modifier.clickable { onJenisChange(classOption) }
+                    ) {
+                        RadioButton(
+                            selected = classOption == jenis,
+                            onClick = { onJenisChange(classOption) }
+                        )
+                        Text(text = classOption, modifier = Modifier.padding(start = 8.dp))
+                    }
+                }
+            }
+        }
         OutlinedTextField(
-            value = nim,
-            onValueChange = { onNimChange(it) },
-            label = { Text(text = stringResource(R.string.nim)) },
+            value = jumlah,
+            onValueChange = { onJumlahChange(it) },
+            label = { Text(text = stringResource(R.string.jumlah)) },
             singleLine = true,
             keyboardOptions = KeyboardOptions(
                 capitalization = KeyboardCapitalization.Words,
@@ -231,17 +268,28 @@ fun FormMahasiswa(
                 ).forEach { classOption ->
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.clickable { onClassChange(classOption) }
+                        modifier = Modifier.clickable { onUkuranChange(classOption) }
                     ) {
                         RadioButton(
-                            selected = classOption == selectedClass,
-                            onClick = { onClassChange(classOption) }
+                            selected = classOption == ukuran,
+                            onClick = { onUkuranChange(classOption) }
                         )
                         Text(text = classOption, modifier = Modifier.padding(start = 8.dp))
                     }
                 }
             }
         }
+        OutlinedTextField(
+            value = deskripsi,
+            onValueChange = { onDeskripsiChange(it) },
+            label = { Text(text = stringResource(R.string.deskripsi)) },
+            singleLine = true,
+            keyboardOptions = KeyboardOptions(
+                capitalization = KeyboardCapitalization.Words,
+                imeAction = ImeAction.Next
+            ),
+            modifier = Modifier.fillMaxWidth()
+        )
     }
 }
 

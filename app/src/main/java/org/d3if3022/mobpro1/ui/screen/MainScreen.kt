@@ -48,8 +48,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import org.d3if3022.mobpro1.R
-import org.d3if3022.mobpro1.database.MahasiswaDb
-import org.d3if3022.mobpro1.model.Mahasiswa
+import org.d3if3022.mobpro1.database.BarangDb
+import org.d3if3022.mobpro1.model.Barang
 import org.d3if3022.mobpro1.navigation.Screen
 import org.d3if3022.mobpro1.theme.Mobpro1Theme
 import org.d3if3022.mobpro1.util.SettingsDataStore
@@ -113,7 +113,7 @@ fun MainScreen(navController: NavHostController){
 fun ScreenContent(showList: Boolean, modifier: Modifier, navController: NavHostController){
 
     val context = LocalContext.current
-    val db = MahasiswaDb.getInstance(context)
+    val db = BarangDb.getInstance(context)
     val factory = ViewModelFactory(db.dao)
     val viewModel: MainViewModel = viewModel(factory = factory)
     val data by viewModel.data.collectAsState()
@@ -136,7 +136,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier, navController: NavHostC
                 contentPadding = PaddingValues(bottom = 84.dp)
             ) {
                 items(data) {
-                    ListItem(mahasiswa = it) {
+                    ListItem(barang = it) {
                         navController.navigate(Screen.FormUbah.withId(it.id))
                     }
                     Divider()
@@ -152,7 +152,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier, navController: NavHostC
                 contentPadding = PaddingValues(8.dp, 8.dp, 8.dp, 84.dp)
             ) {
                 items(data) {
-                    GridItem(mahasiswa = it) {
+                    GridItem(barang = it) {
                         navController.navigate(Screen.FormUbah.withId(it.id))
                     }
                 }
@@ -162,7 +162,7 @@ fun ScreenContent(showList: Boolean, modifier: Modifier, navController: NavHostC
 }
 
 @Composable
-fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+fun ListItem(barang: Barang, onClick: () -> Unit) {
     Column (
         modifier = Modifier
             .fillMaxSize()
@@ -171,27 +171,33 @@ fun ListItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Text(
-            text = mahasiswa.nama,
+            text = barang.nama,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontWeight = FontWeight.Bold
         )
+        Text(text = barang.jenis)
         Text(
-            text = mahasiswa.nim,
+            text = barang.jumlah,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
         Text(
-            text = mahasiswa.harga,
+            text = barang.harga,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis
         )
-        Text(text = mahasiswa.kelas)
+        Text(text = barang.ukuran)
+        Text(
+            text = barang.deskripsi,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis
+        )
     }
 }
 
 @Composable
-fun GridItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
+fun GridItem(barang: Barang, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -206,23 +212,33 @@ fun GridItem(mahasiswa: Mahasiswa, onClick: () -> Unit) {
             verticalArrangement = Arrangement.spacedBy(8.dp),
         ) {
             Text(
-                text = mahasiswa.nama,
+                text = barang.nama,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = mahasiswa.nim,
+                text = barang.jenis,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = mahasiswa.harga,
+                text = barang.jumlah,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
             )
             Text(
-                text = mahasiswa.kelas,
+                text = barang.harga,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = barang.ukuran,
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
+            Text(
+                text = barang.deskripsi,
                 maxLines = 4,
                 overflow = TextOverflow.Ellipsis,
             )

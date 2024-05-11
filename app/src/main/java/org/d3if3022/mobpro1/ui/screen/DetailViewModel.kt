@@ -4,39 +4,58 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import org.d3if3022.mobpro1.database.MahasiswaDao
-import org.d3if3022.mobpro1.model.Mahasiswa
+import org.d3if3022.mobpro1.database.BarangDao
+import org.d3if3022.mobpro1.model.Barang
 
-class DetailViewModel(private val dao: MahasiswaDao) : ViewModel() {
+class DetailViewModel(private val dao: BarangDao) : ViewModel() {
 
-    fun insert(nama: String, nim: String, harga: String, kelas: String) {
-        val mahasiswa = Mahasiswa(
+    fun insert(
+        nama: String,
+        jenis: String,
+        jumlah: String,
+        harga: String,
+        ukuran: String,
+        deskripsi: String
+    ) {
+        val barang = Barang(
             nama = nama,
-            nim = nim,
+            jenis = jenis,
+            jumlah = jumlah,
             harga = harga,
-            kelas = kelas
+            ukuran = ukuran,
+            deskripsi = deskripsi
         )
 
         viewModelScope.launch(Dispatchers.IO) {
-            dao.insert(mahasiswa)
+            dao.insert(barang)
         }
     }
 
-    suspend fun getMahasiswa(id: Long): Mahasiswa? {
-        return dao.getMahasiswaById(id)
+    suspend fun getBarang(id: Long): Barang? {
+        return dao.getBarangById(id)
     }
 
-    fun update(id: Long, nama: String, nim: String, harga: String, kelas: String) {
-        val mahasiswa = Mahasiswa(
+    fun update(
+        id: Long,
+        nama: String,
+        jenis: String,
+        jumlah: String,
+        harga: String,
+        ukuran: String,
+        deskripsi: String
+    ) {
+        val barang = Barang(
             id = id,
             nama = nama,
-            nim = nim,
+            jenis = jenis,
+            jumlah = jumlah,
             harga = harga,
-            kelas = kelas
+            ukuran = ukuran,
+            deskripsi = deskripsi
         )
 
         viewModelScope.launch(Dispatchers.IO) {
-            dao.update(mahasiswa)
+            dao.update(barang)
         }
     }
 

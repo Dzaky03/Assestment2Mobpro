@@ -1,0 +1,32 @@
+<resources>
+    <string name="app_name">Inventory Toko</string>
+    <!--  STRING DATA DIKLIK & BELUM ADA DATA  -->
+    <string name="list_kosong">Belum ada data</string>
+    <string name="x_diklik">%1$s diklik!</string>
+    <string name="invalid">Nama Barang, NIM dan kelas harus di isi!</string>
+    <string name="lainnya">Pilihan Lainnya</string>
+    <!--  STRING NAMA & NIM  -->
+    <string name="nama">Nama Barang</string>
+    <string name="nim">Jumlah Barang</string>
+    <string name="harga">Harga Barang</string>
+    <!--  STRING KEMBALI & SIMPAN  -->
+    <string name="kembali">Kembali</string>
+    <string name="simpan">Simpan</string>
+    <!--  STRING KELAS  -->
+    <string name="kelas1">Ukuran S</string>
+    <string name="kelas2">Ukuran M</string>
+    <string name="kelas3">Ukuran L</string>
+    <string name="kelas4">Ukuran XL</string>
+    <string name="kelas5">Ukuran XXL</string>
+    <!--  STRING TAMBAH DATA MAHASISWA & UBAH DATA MAHASISWA  -->
+    <string name="tambah_mahasiswa">Tambah Data Barang</string>
+    <string name="edit_mahasiswa">Ubah Data Barang</string>
+    <string name="hapus">Hapus Data Barang</string>
+    <!--   STRING TOMBOL RESPONSIVE   -->
+    <string name="list">Tampilan List</string>
+    <string name="grid">Tampilan Grid</string>
+    <!--   STRING TOMBOL WARNING HAPUS PESAN & BATAL   -->
+    <string name="pesan_hapus">Hapus Data Barang Ini?</string>
+    <string name="tombol_hapus">Hapus</string>
+    <string name="tombol_batal">Batal</string>
+</resources>
